@@ -1,0 +1,65 @@
+# To solve the image not displaying problem while Debug=True , follow these steps
+
+# Install whitenoise
+pip install whitenoise
+
+
+# In settings.py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    # Add whitenoise here
+      "whitenoise.middleware.WhiteNoiseMiddleware",      
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+INSTALLED_APPS = [
+        'whitenoise.runserver_nostatic'
+]
+
+# Add these static files
+STATIC_URL = '/static/'
+STATIC_ROOT = '/static/'
+ADMIN_MEDIA_PREFIX = '/admin/media/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = '/static/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / 'media'
+if DEBUG:
+
+  STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+else:
+
+  STATIC_ROOT = '/home/diginept/www.blog.digineptronics.com/static'
+
+  
+
+MEDIA_ROOT = '/home/diginept/www.blog.digineptronics.com/media'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+  
+]
+
+
+
+# Add this files to urls.py of your project
+from django.urls import re_path
+from django.views.static import serve
+from django.config import setttings
+
+urlpatterns = [
+         re_path(r'^media/(?P<path>.*)$', serve, {
+            'document_root': settings.MEDIA_ROOT,
+        }),
+]
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
